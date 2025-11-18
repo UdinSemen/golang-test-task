@@ -1,0 +1,38 @@
+services:
+  postgresql:
+    image: postgres:16-alpine
+    container_name: 'postgresql_test_go_service'
+    restart:
+      unless-stopped
+    ports:
+      - "5434:5432"
+    volumes:
+      - ~/.docker-conf/postgresql/test_go_service/data/:/var/lib/postgresql/data/
+      - ~/.docker-conf/postgresql/test_go_service/log/:/var/log/postgresql/
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+    command: [ "postgres", "-c", "shared_buffers=128MB" ]
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready --username ${POSTGRES_USER} --dbname ${POSTGRES_DB}" ]
+      interval: 1s
+      retries: 3
+      timeout: 5s
+  application:
+    build:
+      context: ../
+    container_name: 'application_test_go_service'
+    ports:
+      - "8082:8080"
+    volumes:
+      - ./service/config.yaml:/app/config.yaml
+    restart:
+      unless-stopped
+    environment:
+      PATH_CONFIG: "config.yaml"
+      CONNECTORS_MAIN_STORAGE_POSTGRES_USER: ${POSTGRES_USER}
+      CONNECTORS_MAIN_STORAGE_POSTGRES_PASS: ${POSTGRES_PASSWORD}
+    depends_on:
+      - postgresql
+

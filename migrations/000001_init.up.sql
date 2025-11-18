@@ -1,0 +1,9 @@
+BEGIN;
+
+CREATE TABLE IF NOT EXISTS public.nums
+(
+    id  SERIAL PRIMARY KEY,
+    num BIGINT NOT NULL
+);
+
+COMMIT;

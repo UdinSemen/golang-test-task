@@ -1,0 +1,73 @@
+basePath: /v1
+definitions:
+  http.AddNumRequest:
+    properties:
+      num:
+        type: integer
+    type: object
+  http.NumResponse:
+    properties:
+      nums:
+        items:
+          type: integer
+        type: array
+    type: object
+  numerator.failResponse:
+    properties:
+      message:
+        type: string
+      success:
+        example: false
+        type: boolean
+    type: object
+  numerator.successResponse:
+    properties:
+      body: {}
+      message:
+        type: string
+      success:
+        example: true
+        type: boolean
+    type: object
+info:
+  contact: {}
+  description: Данный сервис принимает запросы на добавление числа и возвращает отсортированный
+    список чисел
+  title: Сервис для тестового задания
+  version: 1.0.0
+paths:
+  /num:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Структура добавления числа
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/http.AddNumRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/numerator.successResponse'
+            - properties:
+                body:
+                  $ref: '#/definitions/http.NumResponse'
+              type: object
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/numerator.failResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/numerator.failResponse'
+      summary: Добавление чисел
+      tags:
+      - API
+swagger: "2.0"

@@ -1,0 +1,12 @@
+connectors:
+  httpServer:
+    host: "0.0.0.0"
+    port: "8080"
+
+  mainStorage:
+    postgres:
+      host: "localhost"
+      port: 5432
+      user: "postgres"
+      pass: "postgres"
+      db: "app_db"
